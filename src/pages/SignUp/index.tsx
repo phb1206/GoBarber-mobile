@@ -18,7 +18,7 @@ import * as Yup from 'yup';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-import KeyboardListener from '../../hooks/keyboardListener';
+import { useKeyboardListener } from '../../hooks/keyboardListener';
 import getValidationErrors from '../../utils/getValidationErrors';
 import api from '../../services/api';
 
@@ -36,6 +36,8 @@ const SignUp: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
     const emailInputRef = useRef<TextInput>(null);
     const passwordInputRef = useRef<TextInput>(null);
+
+    const { isKeyboardUp } = useKeyboardListener();
 
     const handleSubmit = useCallback(
         async (data: SignUpDTO) => {
@@ -136,7 +138,7 @@ const SignUp: React.FC = () => {
                 </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
 
-            {!KeyboardListener() && (
+            {!isKeyboardUp() && (
                 <SignInButton onPress={() => navigation.goBack()}>
                     <Icon name="arrow-left" size={20} color="#f4ede8" />
                     <SignInButtonText>Back to login</SignInButtonText>

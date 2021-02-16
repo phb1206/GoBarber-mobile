@@ -1,7 +1,21 @@
-import { useState, useEffect } from 'react';
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useState,
+    useEffect,
+} from 'react';
 import { Keyboard } from 'react-native';
 
-export default function KeyboardListener(): boolean {
+interface KeyboardListenerContextData {
+    isKeyboardUp(): boolean;
+}
+
+const KeyboardListenerContext = createContext<KeyboardListenerContextData>(
+    {} as KeyboardListenerContextData,
+);
+
+export const KeyboardListenerProvider: React.FC = ({ children }) => {
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     useEffect(() => {
@@ -24,5 +38,24 @@ export default function KeyboardListener(): boolean {
         };
     }, []);
 
-    return isKeyboardVisible;
+    const isKeyboardUp = useCallback(() => isKeyboardVisible, [
+        isKeyboardVisible,
+    ]);
+
+    return (
+        <KeyboardListenerContext.Provider value={{ isKeyboardUp }}>
+            {children}
+        </KeyboardListenerContext.Provider>
+    );
+};
+
+export function useKeyboardListener(): KeyboardListenerContextData {
+    const context = useContext(KeyboardListenerContext);
+
+    if (!context)
+        throw new Error(
+            'useKeyboardListener must be used within a KeyboardListenerProvider',
+        );
+
+    return context;
 }

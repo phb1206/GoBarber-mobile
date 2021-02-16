@@ -29,7 +29,7 @@
     ],
     "rules": {
 	    "no-use-before-define": "off",
-        "no-unused-vars": "warn",
+        "no-unused-vars": "off",
         "no-nested-ternary": "warn",
         "import/prefer-default-export": "off",
         "react-hooks/rules-of-hooks": "error",
@@ -45,7 +45,8 @@
 	        ]
 	      }
 	    ],
-        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/ban-types": "off",
         "@typescript-eslint/no-explicit-any": "off",
 	    "@typescript-eslint/no-use-before-define": [
 	      "error"

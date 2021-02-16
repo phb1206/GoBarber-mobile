@@ -18,7 +18,8 @@ import * as Yup from 'yup';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-import KeyboardListener from '../../hooks/keyboardListener';
+import { useAuth } from '../../hooks/auth';
+import { useKeyboardListener } from '../../hooks/keyboardListener';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import {
@@ -41,35 +42,41 @@ const SignIn: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
     const passwordInputRef = useRef<TextInput>(null);
 
-    const handleSubmit = useCallback(async (data: SignInDTO) => {
-        try {
-            formRef.current?.setErrors({});
+    const { signIn } = useAuth();
+    const { isKeyboardUp } = useKeyboardListener();
 
-            const schema = Yup.object().shape({
-                email: Yup.string()
-                    .required('Insert valid e-mail')
-                    .email('Insert valid e-mail'),
-                password: Yup.string().required('Insert password'),
-            });
+    const handleSubmit = useCallback(
+        async (data: SignInDTO) => {
+            try {
+                formRef.current?.setErrors({});
 
-            await schema.validate(data, {
-                abortEarly: false,
-            });
+                const schema = Yup.object().shape({
+                    email: Yup.string()
+                        .required('Insert valid e-mail')
+                        .email('Insert valid e-mail'),
+                    password: Yup.string().required('Insert password'),
+                });
 
-            // signIn(data);
-        } catch (err) {
-            if (err instanceof Yup.ValidationError) {
-                const errors = getValidationErrors(err);
-                formRef.current?.setErrors(errors);
-                // return;
+                await schema.validate(data, {
+                    abortEarly: false,
+                });
+
+                signIn(data);
+            } catch (err) {
+                if (err instanceof Yup.ValidationError) {
+                    const errors = getValidationErrors(err);
+                    formRef.current?.setErrors(errors);
+                    // return;
+                }
+
+                Alert.alert(
+                    'Authentication error',
+                    'A login error has ocurred, please check credentials',
+                );
             }
-
-            Alert.alert(
-                'Authentication error',
-                'A login error has ocurred, please check credentials',
-            );
-        }
-    }, []);
+        },
+        [signIn],
+    );
 
     return (
         <>
@@ -123,7 +130,7 @@ const SignIn: React.FC = () => {
                 </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
 
-            {!KeyboardListener() && (
+            {!isKeyboardUp() && (
                 <SignUpButton onPress={() => navigation.navigate('SignUp')}>
                     <Icon name="log-in" size={20} color="#ff9000" />
                     <SignUpButtonText>Sign Up</SignUpButtonText>
