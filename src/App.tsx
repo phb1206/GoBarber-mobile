@@ -13,7 +13,7 @@ const App: React.FC = () => (
         <StatusBar
             barStyle="light-content"
             translucent
-            backgroundColor="#312e38"
+            backgroundColor="transparent"
         />
         <AppProvider>
             <Routes />
